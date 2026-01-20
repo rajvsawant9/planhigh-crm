@@ -2,7 +2,7 @@ import { Requirement } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, User, Wallet, Ruler, Link } from "lucide-react";
+import { MapPin, User, Wallet, Ruler, Link, Mail, Phone, Share2 } from "lucide-react";
 
 interface RequirementCardProps {
     req: Requirement;
@@ -27,7 +27,15 @@ export function RequirementCard({ req }: RequirementCardProps) {
                     <User className="h-4 w-4 text-slate-500" />
                     {req.clientName}
                 </CardTitle>
-                <CardDescription className="flex items-center gap-1 text-xs">
+                <div className="flex flex-col gap-1 mt-1">
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Mail className="h-3 w-3" /> {req.clientEmail}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Phone className="h-3 w-3" /> {req.clientPhone}
+                    </div>
+                </div>
+                <CardDescription className="flex items-center gap-1 text-xs mt-2">
                     Via: {req.source}
                 </CardDescription>
             </CardHeader>
@@ -51,10 +59,22 @@ export function RequirementCard({ req }: RequirementCardProps) {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="p-4 border-t bg-slate-50/50 flex justify-between items-center text-xs text-slate-500">
-                <span>Added: {new Date(req.createdAt).toLocaleDateString()}</span>
-                {/* Button is handled by parent for now */}
-                <div />
+            <CardFooter className="p-4 border-t bg-slate-50/50 flex justify-between items-center">
+                <div className="flex flex-col text-[10px] text-slate-500">
+                    <span>Added: {new Date(req.createdAt).toLocaleDateString()}</span>
+                </div>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        const text = `*New Requirement on Planext CRM* 📋\n\n*Client:* ${req.clientName}\n*Type:* ${req.type} (${req.status})\n*Budget:* ${req.budgetMin} - ${req.budgetMax}\n*Size:* ${req.sizeMin} - ${req.sizeMax} sqft\n*Location:* ${req.locationPreference}`;
+                        window.open(`https://wa.me/${req.clientPhone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                >
+                    <Share2 className="h-3.5 w-3.5 mr-1" /> WhatsApp
+                </Button>
             </CardFooter>
         </Card>
     );

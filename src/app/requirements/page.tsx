@@ -14,6 +14,8 @@ const initialRequirements: Requirement[] = [
     {
         id: "R1",
         clientName: "Global Tech Solutions",
+        clientEmail: "contact@globaltech.com",
+        clientPhone: "9876543210",
         type: "Office",
         status: "Lease",
         source: "Direct",
@@ -27,6 +29,8 @@ const initialRequirements: Requirement[] = [
     {
         id: "R2",
         clientName: "Mr. Sharma (Investor)",
+        clientEmail: "sharma@invest.in",
+        clientPhone: "9988776655",
         type: "Land",
         status: "Sale",
         source: "Investor",

@@ -1,7 +1,7 @@
 import { Contact } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, MapPin, Building, MoreHorizontal } from "lucide-react";
+import { Phone, MapPin, Building, MoreHorizontal, Share2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -52,7 +52,7 @@ export function ContactCard({ contact }: ContactCardProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                        <span>{contact.location}</span>
+                        <span className="truncate">{contact.location}</span>
                     </div>
                 </div>
                 {contact.remark && (
@@ -60,6 +60,19 @@ export function ContactCard({ contact }: ContactCardProps) {
                         "{contact.remark}"
                     </div>
                 )}
+                <div className="pt-3 flex gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full h-8 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 border-green-200"
+                        onClick={() => {
+                            const text = `Hi ${contact.name}, this is regarding Planext CRM. Let's connect!`;
+                            window.open(`https://wa.me/${contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`, '_blank');
+                        }}
+                    >
+                        <Share2 className="h-3.5 w-3.5 mr-1" /> WhatsApp
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );

@@ -23,7 +23,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex min-h-screen flex-col md:flex-row">
             <AppSidebar />
-            <div className="flex-1 bg-slate-50/50 p-4 md:p-8 overflow-auto h-screen">
+            <div className="flex-1 bg-slate-50/50 p-4 pt-16 md:p-8 md:pt-4 overflow-auto h-screen">
                 <div className="mx-auto max-w-7xl space-y-8">
                     {children}
                 </div>

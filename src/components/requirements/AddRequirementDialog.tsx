@@ -34,6 +34,8 @@ import { Plus } from "lucide-react"
 
 const formSchema = z.object({
     clientName: z.string().min(2, "Client Name is required"),
+    clientEmail: z.string().email("Invalid email address"),
+    clientPhone: z.string().regex(/^[0-9]{10}$/, "Phone number must be 10 digits"),
     type: z.enum(["Shops", "Office", "Warehouse", "Land"]),
     status: z.enum(["Sale", "Lease", "Pre-Lease"]),
     source: z.enum(["CP", "Direct", "Investor"]),
@@ -53,6 +55,8 @@ export function AddRequirementDialog({ onAdd }: AddRequirementDialogProps) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             clientName: "",
+            clientEmail: "",
+            clientPhone: "",
             type: "Shops",
             status: "Lease",
             source: "Direct",
@@ -104,6 +108,35 @@ export function AddRequirementDialog({ onAdd }: AddRequirementDialogProps) {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="clientEmail"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email ID</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g. john@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="clientPhone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone / WhatsApp</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g. 9876543210" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <div className="grid grid-cols-3 gap-4">
                             <FormField

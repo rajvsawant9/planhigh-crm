@@ -29,6 +29,8 @@ export interface PropertyDocument {
 export interface Requirement {
   id: string;
   clientName: string;
+  clientEmail: string;
+  clientPhone: string;
   type: RequirementType;
   status: PropertyStatus;
   source: string; // CP, Direct, Investor
