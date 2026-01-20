@@ -15,7 +15,7 @@ import {
     Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 
 const navItems = [
@@ -111,6 +111,8 @@ export function AppSidebar() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 bg-slate-900 border-r-slate-800 p-0 text-slate-50">
+                    <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                    <SheetDescription className="sr-only">Access all pages of the Planext CRM.</SheetDescription>
                     <div className="flex h-20 items-center justify-center border-b border-slate-800/50">
                         <div className="relative h-10 w-32">
                             <Image
