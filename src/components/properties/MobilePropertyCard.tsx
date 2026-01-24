@@ -1,3 +1,5 @@
+"use client";
+
 import { Property } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,9 +22,18 @@ export function MobilePropertyCard({ property }: MobilePropertyCardProps) {
                             {property.location}
                         </div>
                     </div>
-                    <Badge variant={property.status === 'Sale' ? 'default' : 'secondary'}>
-                        {property.status}
-                    </Badge>
+                    <div className="flex flex-col gap-1 items-end">
+                        <Badge variant="secondary" className={`border-0 text-white text-[10px] px-2 h-5 ${
+                            property.inventoryStatus === 'Active' ? 'bg-emerald-500' :
+                            property.inventoryStatus === 'Passive' ? 'bg-amber-500' :
+                            'bg-slate-500'
+                        }`}>
+                            {property.inventoryStatus}
+                        </Badge>
+                        <Badge variant={property.status === 'Sale' ? 'default' : 'secondary'}>
+                            {property.status}
+                        </Badge>
+                    </div>
                 </div>
 
                 <div className="flex gap-3 text-sm mb-4">

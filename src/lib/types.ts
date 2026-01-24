@@ -3,11 +3,14 @@ export type PropertyStatus = "Sale" | "Lease" | "Pre-Lease";
 export type RequirementType = "Shops" | "Office" | "Warehouse" | "Land";
 export type ContactType = "Developer" | "Channel Partner" | "Brand" | "Investor";
 
+export type InventoryStatus = "Active" | "Passive" | "Closed";
+
 export interface Property {
   id: string;
   title: string;
   type: PropertyType;
   status: PropertyStatus;
+  inventoryStatus: InventoryStatus;
   source: string; // CP or Direct
   location: string;
   locationLink?: string;
@@ -29,6 +32,8 @@ export interface PropertyDocument {
 export interface Requirement {
   id: string;
   clientName: string;
+  clientEmail: string;
+  clientPhone: string;
   type: RequirementType;
   status: PropertyStatus;
   source: string; // CP, Direct, Investor

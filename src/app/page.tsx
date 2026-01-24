@@ -2,6 +2,7 @@ import { Shell } from "@/components/layout/Shell";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { StatsGraph } from "@/components/dashboard/StatsGraph";
 import { FollowUpList } from "@/components/dashboard/FollowUpList";
+import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 
 export default function DashboardPage() {
   return (
@@ -22,11 +23,12 @@ export default function DashboardPage() {
         <StatsCards />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <div className="col-span-4">
+          <div className="col-span-4 space-y-4">
             <StatsGraph />
-          </div>
-          <div className="col-span-3">
             <FollowUpList />
+          </div>
+          <div className="col-span-3 h-full">
+            <ActivityFeed />
           </div>
         </div>
       </div>

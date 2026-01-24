@@ -1,3 +1,5 @@
+"use client";
+
 import { Property } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +32,14 @@ export function PropertyCard({ property }: PropertyCardProps) {
                         <span className="text-sm">No Image</span>
                     </div>
                 )}
-                <div className="absolute top-2 right-2 flex gap-2">
+                <div className="absolute top-2 right-2 flex gap-2 flex-wrap justify-end">
+                    <Badge variant="secondary" className={`border-0 text-white shadow-sm ${
+                        property.inventoryStatus === 'Active' ? 'bg-emerald-500 hover:bg-emerald-600' :
+                        property.inventoryStatus === 'Passive' ? 'bg-amber-500 hover:bg-amber-600' :
+                        'bg-slate-500 hover:bg-slate-600'
+                    }`}>
+                        {property.inventoryStatus}
+                    </Badge>
                     <Badge variant={property.status === 'Sale' ? 'default' : 'secondary'} className="bg-slate-900/80 hover:bg-slate-900 backdrop-blur-sm text-white border-0">
                         {property.status}
                     </Badge>
@@ -80,7 +89,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                     </div>
                 )}
             </CardContent>
-            <CardFooter className="p-4 border-t bg-slate-50/50 flex gap-2">
+            <CardFooter className="p-4 border-t bg-slate-50/50 grid grid-cols-2 gap-2">
                 <Button
                     variant="outline"
                     size="sm"
@@ -91,16 +100,16 @@ export function PropertyCard({ property }: PropertyCardProps) {
                     PDF
                 </Button>
                 <Button
-                    variant="outline"
+                    variant="default"
                     size="sm"
-                    className="w-full text-xs hover:bg-green-50 hover:text-green-600 hover:border-green-200"
+                    className="w-full text-xs bg-[#25D366] hover:bg-[#128C7E] text-white border-0 shadow-sm font-semibold"
                     onClick={() => {
                         const text = `*Check out this property on Planext CRM* 🏠\n\n*${property.title}*\n📍 Location: ${property.location}\n💰 Price: ${property.price}\n📏 Size: ${property.size}\n\nType: ${property.type} for ${property.status}`;
                         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
                     }}
                 >
-                    <Share2 className="h-3 w-3 mr-2" />
-                    WhatsApp
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share on WhatsApp
                 </Button>
             </CardFooter>
         </Card>

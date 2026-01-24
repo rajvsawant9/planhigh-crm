@@ -17,6 +17,7 @@ const initialProperties: Property[] = [
         title: "Prime Retail Space MG Road",
         type: "Retail",
         status: "Lease",
+        inventoryStatus: "Active",
         source: "Direct",
         location: "MG Road, Bangalore",
         size: "1200 sqft",
@@ -30,6 +31,7 @@ const initialProperties: Property[] = [
         title: "Tech Park Office Suite",
         type: "Office",
         status: "Sale",
+        inventoryStatus: "Active",
         source: "Channel Partner",
         location: "Whitefield, Bangalore",
         size: "5000 sqft",
@@ -43,6 +45,7 @@ const initialProperties: Property[] = [
         title: "Industrial Warehouse",
         type: "Warehouse",
         status: "Lease",
+        inventoryStatus: "Passive",
         source: "Investor",
         location: "Peenya, Bangalore",
         size: "10000 sqft",
@@ -56,6 +59,7 @@ const initialProperties: Property[] = [
         title: "Corner Plot for Commercial",
         type: "Land",
         status: "Sale",
+        inventoryStatus: "Closed",
         source: "Direct",
         location: "Indiranagar, Bangalore",
         size: "2400 sqft",
@@ -80,15 +84,25 @@ const PropertyMap = dynamic(() => import("@/components/properties/PropertyMap"),
 export default function PropertiesPage() {
     const [properties, setProperties] = useState<Property[]>(initialProperties);
     const [activeTab, setActiveTab] = useState("all");
+    const [inventoryFilter, setInventoryFilter] = useState<"All" | "Active" | "Passive" | "Closed">("All");
     const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
     const handleAddProperty = (newProperty: Property) => {
         setProperties([newProperty, ...properties]);
     };
 
-    const filteredProperties = activeTab === "all"
-        ? properties
-        : properties.filter(p => p.type === activeTab);
+    const filteredProperties = properties.filter(p => {
+        const matchesType = activeTab === "all" || p.type === activeTab;
+        const matchesInventory = inventoryFilter === "All" || p.inventoryStatus === inventoryFilter;
+        return matchesType && matchesInventory;
+    });
+
+    const inventoryStats = {
+        total: properties.length,
+        active: properties.filter(p => p.inventoryStatus === 'Active').length,
+        passive: properties.filter(p => p.inventoryStatus === 'Passive').length,
+        closed: properties.filter(p => p.inventoryStatus === 'Closed').length,
+    };
 
     return (
         <Shell>
@@ -123,29 +137,71 @@ export default function PropertiesPage() {
 
                 {viewMode === 'list' ? (
                     <>
-                        <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-lg border shadow-sm">
-                            <div className="relative w-full md:w-96">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Search properties..."
-                                    className="pl-8 bg-slate-50"
-                                    onChange={(e) => {
-                                        const term = e.target.value.toLowerCase();
-                                        if (term === "") {
-                                            setProperties(initialProperties);
-                                        } else {
-                                            setProperties(initialProperties.filter(p =>
-                                                p.title.toLowerCase().includes(term) ||
-                                                p.location.toLowerCase().includes(term)
-                                            ));
-                                        }
-                                    }}
-                                />
+                        <div className="flex flex-col gap-4">
+                            {/* Analytics Cards */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                    <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Inventory</div>
+                                    <div className="text-2xl font-bold text-slate-900 mt-1">{inventoryStats.total}</div>
+                                </div>
+                                <div className="bg-white p-4 rounded-xl border border-green-100 shadow-sm bg-green-50/30">
+                                    <div className="text-xs font-medium text-green-600 uppercase tracking-wider">Active</div>
+                                    <div className="text-2xl font-bold text-green-700 mt-1">{inventoryStats.active}</div>
+                                </div>
+                                <div className="bg-white p-4 rounded-xl border border-amber-100 shadow-sm bg-amber-50/30">
+                                    <div className="text-xs font-medium text-amber-600 uppercase tracking-wider">Passive</div>
+                                    <div className="text-2xl font-bold text-amber-700 mt-1">{inventoryStats.passive}</div>
+                                </div>
+                                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm bg-slate-50">
+                                    <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Closed</div>
+                                    <div className="text-2xl font-bold text-slate-600 mt-1">{inventoryStats.closed}</div>
+                                </div>
                             </div>
-                            <Button variant="outline" size="icon">
-                                <Filter className="h-4 w-4" />
-                            </Button>
+
+                            <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-lg border shadow-sm">
+                                <div className="relative w-full md:w-96">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Search properties..."
+                                        className="pl-8 bg-slate-50"
+                                        onChange={(e) => {
+                                            const term = e.target.value.toLowerCase();
+                                            if (term === "") {
+                                                setProperties(initialProperties);
+                                            } else {
+                                                setProperties(initialProperties.filter(p =>
+                                                    p.title.toLowerCase().includes(term) ||
+                                                    p.location.toLowerCase().includes(term)
+                                                ));
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                
+                                <div className="flex items-center gap-2 ml-auto">
+                                    <span className="text-sm font-medium text-slate-700">Status:</span>
+                                    <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+                                        {(['All', 'Active', 'Passive', 'Closed'] as const).map((status) => (
+                                            <button
+                                                key={status}
+                                                onClick={() => setInventoryFilter(status)}
+                                                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                                                    inventoryFilter === status
+                                                        ? 'bg-white text-slate-900 shadow-sm'
+                                                        : 'text-slate-500 hover:text-slate-900'
+                                                }`}
+                                            >
+                                                {status}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <Button variant="outline" size="icon">
+                                    <Filter className="h-4 w-4" />
+                                </Button>
+                            </div>
                         </div>
 
                         <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>

@@ -27,6 +27,8 @@ const navItems = [
     { name: "Report", href: "/reports", icon: BarChart3 },
     { name: "Calendar", href: "/calendar", icon: Calendar },
 ];
+// Extra item for specific action
+import { Sparkles } from "lucide-react";
 
 import Image from "next/image";
 
@@ -37,7 +39,11 @@ import { LogOut } from "lucide-react";
 
 // ...
 
-export function AppSidebar() {
+interface AppSidebarProps {
+    onAIRequest?: () => void;
+}
+
+export function AppSidebar({ onAIRequest }: AppSidebarProps) {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
@@ -92,6 +98,15 @@ export function AppSidebar() {
                                 {item.name}
                             </Link>
                         ))}
+                        <button
+                            onClick={onAIRequest}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-slate-400 transition-all hover:text-white hover:bg-slate-800/50 mt-2"
+                        >
+                            <Sparkles className="h-4 w-4 text-purple-400" />
+                            <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent font-semibold">
+                                Ask AI Assistant
+                            </span>
+                        </button>
                     </nav>
                 </div>
                 <div className="shrink-0">
@@ -164,6 +179,18 @@ export function AppSidebar() {
                                 </Link>
                             ))}
                         </nav>
+                        <button
+                            onClick={() => {
+                                setOpen(false);
+                                onAIRequest?.();
+                            }}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-slate-400 transition-all hover:text-white hover:bg-slate-800/50 mt-2 mx-4"
+                        >
+                            <Sparkles className="h-4 w-4 text-purple-400" />
+                            <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent font-semibold">
+                                Ask AI Assistant
+                            </span>
+                        </button>
                     </div>
 
                     <div className="shrink-0 border-t border-slate-800 p-4 bg-slate-900/50 backdrop-blur-sm">

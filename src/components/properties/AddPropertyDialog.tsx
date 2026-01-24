@@ -39,6 +39,7 @@ const formSchema = z.object({
     }),
     type: z.enum(["Retail", "Office", "Warehouse", "Land"]),
     status: z.enum(["Sale", "Lease", "Pre-Lease"]),
+    inventoryStatus: z.enum(["Active", "Passive", "Closed"]),
     source: z.string().min(2, "Source is required"),
     location: z.string().min(2, "Location is required"),
     size: z.string().min(1, "Size is required"),
@@ -56,6 +57,7 @@ export function AddPropertyDialog({ onAdd }: AddPropertyDialogProps) {
             title: "",
             type: "Retail",
             status: "Sale",
+            inventoryStatus: "Active",
             source: "",
             location: "",
             size: "",
@@ -151,6 +153,41 @@ export function AddPropertyDialog({ onAdd }: AddPropertyDialogProps) {
                                 )}
                             />
                         </div>
+
+                        <FormField
+                            control={form.control}
+                            name="inventoryStatus"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Inventory Status</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select inventory status" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="Active">
+                                                <span className="flex items-center gap-2">
+                                                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Active
+                                                </span>
+                                            </SelectItem>
+                                            <SelectItem value="Passive">
+                                                 <span className="flex items-center gap-2">
+                                                    <span className="h-2 w-2 rounded-full bg-amber-500" /> Passive
+                                                </span>
+                                            </SelectItem>
+                                            <SelectItem value="Closed">
+                                                 <span className="flex items-center gap-2">
+                                                    <span className="h-2 w-2 rounded-full bg-slate-500" /> Closed
+                                                </span>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}
