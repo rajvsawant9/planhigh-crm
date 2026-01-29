@@ -2,69 +2,97 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-type UserRole = "admin" | "agent" | "client";
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: UserRole;
-    avatar?: string;
-}
+import { authService, User } from "@/services/authService";
 
 interface AuthContextType {
-    user: User | null;
-    login: (email: string, role: UserRole) => void;
-    logout: () => void;
-    isAuthenticated: boolean;
+  user: User | null;
+  login: (email: string, role: string, password?: string) => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
-    user: null,
-    login: () => { },
-    logout: () => { },
-    isAuthenticated: false,
+  user: null,
+  login: async () => {},
+  logout: () => {},
+  isAuthenticated: false,
+  loading: true,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-    // Mock persistence
-    useEffect(() => {
-        const storedUser = localStorage.getItem("planext_user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      const refreshToken = localStorage.getItem("refreshToken");
+      console.log(
+        "CheckAuth: Token present:",
+        !!token,
+        "Refresh Token present:",
+        !!refreshToken,
+      );
+
+      if (token) {
+        try {
+          const userData = await authService.getMe();
+          setUser(userData);
+        } catch (error) {
+          console.error("Auth check failed:", error);
+          // If axios redirected, we might not reach here, or we might.
+          // But removing token here is safe if getMe failed strictly.
+          localStorage.removeItem("token");
         }
-    }, []);
-
-    const login = (email: string, role: UserRole) => {
-        // Mock login logic
-        const mockUser: User = {
-            id: Math.random().toString(36).substr(2, 9),
-            name: email.split("@")[0], // Simple name extraction
-            email,
-            role,
-            avatar: "https://github.com/shadcn.png"
-        };
-
-        setUser(mockUser);
-        localStorage.setItem("planext_user", JSON.stringify(mockUser));
-        router.push("/");
+      }
+      setLoading(false);
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("planext_user");
-        router.push("/login");
-    };
+    checkAuth();
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const login = async (email: string, role: string, password?: string) => {
+    try {
+      // Note: If the backend actually uses password, it should be passed here.
+      // Adjusting logic to use the password version if provided, or default.
+      let response;
+      if (password) {
+        response = await authService.loginWithPassword(email, password, role);
+      } else {
+        // Fallback for current UI if password not plumbed through yet, although I will update UI next.
+        response = await authService.login(email, role);
+      }
+
+      const { token, refreshToken, user } = response;
+      console.log("Login Success: Received Tokens", {
+        token: !!token,
+        refreshToken: !!refreshToken,
+      });
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+      setUser(user);
+      router.push("/");
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated: !!user, loading }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthContext);

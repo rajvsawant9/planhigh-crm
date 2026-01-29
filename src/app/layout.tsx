@@ -21,7 +21,9 @@ export const metadata: Metadata = {
   },
 };
 
+import QueryProvider from "@/providers/QueryProvider";
 import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "sonner";
 
 // ...
 
@@ -32,10 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} font-sans antialiased bg-slate-50 text-slate-900`}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+      <body
+        className={`${outfit.variable} font-sans antialiased bg-slate-50 text-slate-900`}
+      >
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );
